@@ -18,7 +18,7 @@ export async function getTasks(): Promise<TaskType[]> {
     const tasks = await Task.find().sort({ createdAt: -1 }).lean(); 
   
     return tasks.map((task): TaskType => ({
-      _id: task._id.toString(), // Remove the 'any' casting here
+      _id: (task._id as string).toString(), // Remove the 'any' casting here
       title: task.title,
       description: task.description,
       dueDate: task.dueDate instanceof Date ? task.dueDate.toISOString() : task.dueDate,

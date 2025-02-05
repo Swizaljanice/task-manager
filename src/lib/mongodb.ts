@@ -1,37 +1,24 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI || "";
 
-if (!MONGODB_URI) {
-  throw new Error("❌ MONGODB_URI is missing in .env.local");
-}
+if (!MONGODB_URI) throw new Error("MONGODB_URI is missing in .env.local");
 
 declare global {
   var mongooseConn: Promise<typeof mongoose> | undefined;
 }
 
-const connectDB = async () => {
-  try {
-    if (mongoose.connection.readyState >= 1) {
-      console.log("✅ Already connected to MongoDB.");
-      return;
-    }
+export default async function connectDB() {
+  if (mongoose.connection.readyState >= 1) return;
 
-    if (!global.mongooseConn) {
-      global.mongooseConn = mongoose.connect(MONGODB_URI, {
-        dbName: "task-manager",
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as mongoose.ConnectOptions);
-    }
-
-    await global.mongooseConn;
-    console.log("🚀 MongoDB Connected Successfully!");
-
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error);
-    throw new Error("Failed to connect to MongoDB.");
+  if (!global.mongooseConn) {
+    global.mongooseConn = mongoose.connect(MONGODB_URI, {
+      dbName: "task-manager",
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    } as mongoose.ConnectOptions);
   }
-};
 
-export default connectDB;
+  await global.mongooseConn;
+  console.log("✅ MongoDB Connected Successfully!");
+}

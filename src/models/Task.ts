@@ -1,18 +1,20 @@
+// models/Task.ts
 import mongoose, { Schema, Document } from "mongoose";
 
-interface ITask extends Document {
-_id: mongoose.Types.ObjectId;
+interface Task extends Document {
   title: string;
   description: string;
-  dueDate?: Date | null;
+  dueDate: string | null;
   completed: boolean;
 }
 
-const TaskSchema = new Schema<ITask>({
+const taskSchema = new Schema<Task>({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  dueDate: { type: Date, default: null },
+  dueDate: { type: Date, required: false },
   completed: { type: Boolean, default: false },
-}, { timestamps: true });
+});
 
-export default mongoose.models.Task || mongoose.model<ITask>("Task", TaskSchema);
+const Task = mongoose.models.Task || mongoose.model<Task>("Task", taskSchema);
+
+export default Task;
